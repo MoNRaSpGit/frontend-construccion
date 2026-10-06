@@ -4,6 +4,18 @@ export type Cargo = (typeof CARGOS)[number];
 export const ASISTENCIA_ESTADOS = ["presente", "media", "ausente"] as const;
 export type AsistenciaEstado = (typeof ASISTENCIA_ESTADOS)[number];
 
+export const SEGURIDAD_ITEMS = ["casco", "chaleco", "botines", "guantes", "lentes", "arnes"] as const;
+export type SeguridadItem = (typeof SEGURIDAD_ITEMS)[number];
+
+export const SEGURIDAD_ITEM_LABELS: Record<SeguridadItem, string> = {
+  casco: "Casco",
+  chaleco: "Chaleco reflectante",
+  botines: "Botines de seguridad",
+  guantes: "Guantes",
+  lentes: "Lentes de proteccion",
+  arnes: "Arnes"
+};
+
 export type Obra = {
   id: number;
   nombre: string;
@@ -29,6 +41,14 @@ export type Asistencia = {
   personalId: number;
   fecha: string;
   estado: AsistenciaEstado;
+};
+
+export type Seguridad = {
+  id: number;
+  personalId: number;
+  fecha: string;
+  cumple: boolean;
+  itemsFaltantes: SeguridadItem[];
 };
 
 export type Anticipo = {

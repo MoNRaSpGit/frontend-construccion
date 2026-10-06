@@ -4,12 +4,14 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { LiquidacionPage } from "./pages/LiquidacionPage";
 import { ObrasPage } from "./pages/ObrasPage";
 import { PersonalPage } from "./pages/PersonalPage";
+import { SeguridadPage } from "./pages/SeguridadPage";
 
-type Route = "home" | "obras" | "personal" | "asistencia" | "liquidacion";
+type Route = "home" | "obras" | "personal" | "asistencia" | "seguridad" | "liquidacion";
 
 const TABS: { route: Route; label: string; icon: string }[] = [
   { route: "home", label: "Resumen", icon: "\u{1F4CB}" },
   { route: "asistencia", label: "Asistencia", icon: "\u{2705}" },
+  { route: "seguridad", label: "Seguridad", icon: "\u{1F9BA}" },
   { route: "personal", label: "Personal", icon: "\u{1F477}" },
   { route: "obras", label: "Obras", icon: "\u{1F3D7}" },
   { route: "liquidacion", label: "Pagos", icon: "\u{1F4B0}" }
@@ -17,7 +19,13 @@ const TABS: { route: Route; label: string; icon: string }[] = [
 
 function readRoute(): Route {
   const hash = window.location.hash.replace("#", "");
-  if (hash === "obras" || hash === "personal" || hash === "asistencia" || hash === "liquidacion") {
+  if (
+    hash === "obras" ||
+    hash === "personal" ||
+    hash === "asistencia" ||
+    hash === "seguridad" ||
+    hash === "liquidacion"
+  ) {
     return hash;
   }
   return "home";
@@ -45,6 +53,7 @@ export function ConstruccionApp() {
       {route === "obras" ? <ObrasPage /> : null}
       {route === "personal" ? <PersonalPage /> : null}
       {route === "asistencia" ? <AsistenciaPage /> : null}
+      {route === "seguridad" ? <SeguridadPage /> : null}
       {route === "liquidacion" ? <LiquidacionPage /> : null}
 
       <nav className="tabbar">

@@ -12,7 +12,7 @@ function currentMonthKey() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
 }
 
-type Route = "home" | "obras" | "personal" | "asistencia" | "liquidacion";
+type Route = "home" | "obras" | "personal" | "asistencia" | "seguridad" | "liquidacion";
 
 export function DashboardPage({ onNavigate }: { onNavigate: (route: Route) => void }) {
   const [obras, setObras] = useState<Obra[] | null>(null);
@@ -69,6 +69,14 @@ export function DashboardPage({ onNavigate }: { onNavigate: (route: Route) => vo
             <span className="list-card-sub">Presente, media jornada o ausente, por obra.</span>
           </div>
           <span className="tabbar-icon">{"\u{2705}"}</span>
+        </button>
+
+        <button type="button" className="list-card" onClick={() => onNavigate("seguridad")}>
+          <div className="list-card-main">
+            <span className="list-card-title">Control de seguridad</span>
+            <span className="list-card-sub">Casco, chaleco, botines... de los presentes de hoy.</span>
+          </div>
+          <span className="tabbar-icon">{"\u{1F9BA}"}</span>
         </button>
 
         <button type="button" className="list-card" onClick={() => onNavigate("personal")}>

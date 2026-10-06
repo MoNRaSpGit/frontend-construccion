@@ -1,5 +1,14 @@
 import { API_BASE_URL } from "../../shared/config/api";
-import type { Anticipo, Asistencia, AsistenciaEstado, LiquidacionItem, Obra, Personal } from "./construccion.types";
+import type {
+  Anticipo,
+  Asistencia,
+  AsistenciaEstado,
+  LiquidacionItem,
+  Obra,
+  Personal,
+  Seguridad,
+  SeguridadItem
+} from "./construccion.types";
 
 function buildUrl(path: string) {
   return `${API_BASE_URL}/api/v1${path}`;
@@ -91,6 +100,25 @@ export async function fetchAsistencias(fecha: string): Promise<Asistencia[]> {
 
 export function saveAsistencias(fecha: string, items: { personalId: number; estado: AsistenciaEstado }[]): Promise<Asistencia[]> {
   return postJson<Asistencia[]>("/construccion/asistencias", { fecha, items });
+}
+
+export async function fetchSeguridadItems(): Promise<SeguridadItem[]> {
+  const response = await fetch(buildUrl("/construccion/seguridad-items"));
+  if (!response.ok) throw new Error("No se pudieron cargar los items de seguridad.");
+  return readJson<SeguridadItem[]>(response);
+}
+
+export async function fetchSeguridad(fecha: string): Promise<Seguridad[]> {
+  const response = await fetch(buildUrl(`/construccion/seguridad?fecha=${fecha}`));
+  if (!response.ok) throw new Error("No se pudo cargar el control de seguridad.");
+  return readJson<Seguridad[]>(response);
+}
+
+export function saveSeguridad(
+  fecha: string,
+  items: { personalId: number; cumple: boolean; itemsFaltantes: SeguridadItem[] }[]
+): Promise<Seguridad[]> {
+  return postJson<Seguridad[]>("/construccion/seguridad", { fecha, items });
 }
 
 export async function fetchAnticipos(personalId?: number): Promise<Anticipo[]> {
