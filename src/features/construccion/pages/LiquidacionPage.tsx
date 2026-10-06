@@ -12,7 +12,7 @@ function todayKey() {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }
 
-export function LiquidacionPage() {
+export function LiquidacionPage({ onPagar }: { onPagar: (personalId: number, mes: string) => void }) {
   const [mes, setMes] = useState(currentMonthKey());
   const [items, setItems] = useState<LiquidacionItem[] | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -116,14 +116,14 @@ export function LiquidacionPage() {
                   </button>
                 </form>
               ) : (
-                <button
-                  type="button"
-                  className="icon-button"
-                  style={{ marginTop: 10 }}
-                  onClick={() => setAnticipoAbierto(item.personalId)}
-                >
-                  + Anticipo
-                </button>
+                <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                  <button type="button" className="icon-button" onClick={() => setAnticipoAbierto(item.personalId)}>
+                    + Anticipo
+                  </button>
+                  <button type="button" className="primary-button" style={{ flex: "none", padding: "8px 16px" }} onClick={() => onPagar(item.personalId, mes)}>
+                    Pagar
+                  </button>
+                </div>
               )}
             </div>
           ))}

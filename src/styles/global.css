@@ -469,3 +469,168 @@ a {
   color: var(--color-muted);
   cursor: not-allowed;
 }
+
+.liquidacion-pagar-button {
+  margin-top: 10px;
+  margin-left: 8px;
+}
+
+.boleta-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: 28px 26px;
+  box-shadow: 0 2px 10px rgba(36, 31, 24, 0.06);
+}
+
+.boleta-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.boleta-empresa {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.boleta-empresa-sub {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.boleta-folio {
+  text-align: right;
+}
+
+.boleta-folio-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-accent-dark);
+}
+
+.boleta-folio-num,
+.boleta-folio-fecha {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+.boleta-divider {
+  border-top: 2px dashed var(--color-border);
+  margin: 18px 0;
+}
+
+.boleta-datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.boleta-datos-label {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+  margin-bottom: 2px;
+}
+
+.boleta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 18px;
+}
+
+.boleta-table th,
+.boleta-table td {
+  text-align: left;
+  padding: 9px 8px;
+  border-bottom: 1px solid var(--color-border);
+  font-size: 13px;
+}
+
+.boleta-table th {
+  color: var(--color-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.boleta-table th:last-child,
+.boleta-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.boleta-subtotal td {
+  font-weight: 700;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.boleta-negativo {
+  color: var(--color-danger);
+}
+
+.boleta-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  background: var(--color-busy);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 26px;
+}
+
+.boleta-total span {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--color-muted);
+}
+
+.boleta-total strong {
+  font-size: 22px;
+  font-variant-numeric: tabular-nums;
+}
+
+.boleta-firmas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 30px;
+  margin-top: 36px;
+}
+
+.boleta-firma {
+  text-align: center;
+}
+
+.boleta-firma-linea {
+  border-top: 1px solid var(--color-text);
+  margin-bottom: 6px;
+  height: 36px;
+}
+
+.boleta-firma span {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+
+@media print {
+  .no-print,
+  .tabbar {
+    display: none !important;
+  }
+
+  .boleta-page {
+    max-width: none;
+    padding: 0;
+  }
+
+  .boleta-card {
+    box-shadow: none;
+    border: none;
+  }
+}
