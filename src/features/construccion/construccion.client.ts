@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "../../shared/config/api";
+import { trackActivity } from "../../shared/state/activityLog";
 import type {
   Anticipo,
   Asistencia,
@@ -19,23 +20,27 @@ async function readJson<T>(response: Response): Promise<T> {
   return text ? (JSON.parse(text) as T) : (undefined as T);
 }
 
-async function postJson<T>(path: string, body: unknown): Promise<T> {
+// `activity` es lo que queda en el registro interno de uso cuando el
+// guardado sale bien (ver shared/state/activityLog.ts).
+async function postJson<T>(path: string, body: unknown, activity: string): Promise<T> {
   const response = await fetch(buildUrl(path), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
   if (!response.ok) throw new Error("No se pudo guardar.");
+  trackActivity("accion", activity);
   return readJson<T>(response);
 }
 
-async function patchJson<T>(path: string, body: unknown): Promise<T> {
+async function patchJson<T>(path: string, body: unknown, activity: string): Promise<T> {
   const response = await fetch(buildUrl(path), {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body)
   });
   if (!response.ok) throw new Error("No se pudo guardar.");
+  trackActivity("accion", activity);
   return readJson<T>(response);
 }
 
@@ -52,11 +57,11 @@ export async function fetchObras(): Promise<Obra[]> {
 }
 
 export function createObra(input: { nombre: string; direccion?: string }): Promise<Obra> {
-  return postJson<Obra>("/construccion/obras", input);
+  return postJson<Obra>("/construccion/obras", input, `Alta de obra: ${input.nombre}`);
 }
 
 export function updateObra(id: number, input: Partial<{ nombre: string; direccion: string; activa: boolean }>): Promise<Obra> {
-  return patchJson<Obra>(`/construccion/obras/${id}`, input);
+  return patchJson<Obra>(`/construccion/obras/${id}`, input, `Edicion de obra #${id}`);
 }
 
 export async function fetchPersonal(obraId?: number): Promise<Personal[]> {
@@ -74,7 +79,7 @@ export function createPersonal(input: {
   jornal: number;
   fechaIngreso: string;
 }): Promise<Personal> {
-  return postJson<Personal>("/construccion/personal", input);
+  return postJson<Personal>("/construccion/personal", input, `Alta de personal: ${input.nombre} (${input.cargo})`);
 }
 
 export function updatePersonal(
@@ -89,7 +94,7 @@ export function updatePersonal(
     activo: boolean;
   }>
 ): Promise<Personal> {
-  return patchJson<Personal>(`/construccion/personal/${id}`, input);
+  return patchJson<Personal>(`/construccion/personal/${id}`, input, `Edicion de personal #${id}`);
 }
 
 export async function fetchAsistencias(fecha: string): Promise<Asistencia[]> {
@@ -99,7 +104,7 @@ export async function fetchAsistencias(fecha: string): Promise<Asistencia[]> {
 }
 
 export function saveAsistencias(fecha: string, items: { personalId: number; estado: AsistenciaEstado }[]): Promise<Asistencia[]> {
-  return postJson<Asistencia[]>("/construccion/asistencias", { fecha, items });
+  return postJson<Asistencia[]>("/construccion/asistencias", { fecha, items }, `Asistencia del ${fecha}: ${items.length} persona(s)`);
 }
 
 export async function fetchSeguridadItems(): Promise<SeguridadItem[]> {
@@ -118,7 +123,11 @@ export function saveSeguridad(
   fecha: string,
   items: { personalId: number; cumple: boolean; itemsFaltantes: SeguridadItem[] }[]
 ): Promise<Seguridad[]> {
-  return postJson<Seguridad[]>("/construccion/seguridad", { fecha, items });
+  return postJson<Seguridad[]>(
+    "/construccion/seguridad",
+    { fecha, items },
+    `Control de seguridad del ${fecha}: ${items.length} persona(s)`
+  );
 }
 
 export async function fetchAnticipos(personalId?: number): Promise<Anticipo[]> {
@@ -129,7 +138,7 @@ export async function fetchAnticipos(personalId?: number): Promise<Anticipo[]> {
 }
 
 export function createAnticipo(input: { personalId: number; fecha: string; monto: number; nota?: string }): Promise<Anticipo> {
-  return postJson<Anticipo>("/construccion/anticipos", input);
+  return postJson<Anticipo>("/construccion/anticipos", input, `Anticipo de ${input.monto} a personal #${input.personalId}`);
 }
 
 export async function fetchLiquidacion(mes: string): Promise<LiquidacionItem[]> {

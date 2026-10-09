@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { trackActivity } from "../../shared/state/activityLog";
 import { AsistenciaPage } from "./pages/AsistenciaPage";
 import { BoletaPage } from "./pages/BoletaPage";
 import { DashboardPage } from "./pages/DashboardPage";
@@ -19,6 +20,17 @@ const TABS: { route: Route; label: string; icon: string }[] = [
   { route: "obras", label: "Obras", icon: "\u{1F3D7}" },
   { route: "liquidacion", label: "Pagos", icon: "\u{1F4B0}" }
 ];
+
+// Como se nombra cada pantalla en el registro interno de uso.
+const ROUTE_LABELS: Record<Route, string> = {
+  home: "Resumen",
+  asistencia: "Asistencia",
+  seguridad: "Seguridad",
+  personal: "Personal",
+  obras: "Obras",
+  liquidacion: "Pagos",
+  boleta: "Boleta de pago"
+};
 
 const BOLETA_PATTERN = /^boleta\/(\d+)\/(\d{4}-\d{2})$/;
 
@@ -59,6 +71,16 @@ export function ConstruccionApp() {
   }
 
   const route = parsed.route;
+
+  // Registro interno de uso: una "entrada" al abrir la app y una
+  // "seccion" cada vez que se cambia de pantalla (incluida la primera).
+  useEffect(() => {
+    trackActivity("entrada");
+  }, []);
+
+  useEffect(() => {
+    trackActivity("seccion", ROUTE_LABELS[route]);
+  }, [route]);
 
   return (
     <>
