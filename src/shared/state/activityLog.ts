@@ -1,9 +1,10 @@
 import { API_BASE_URL } from "../config/api";
 
 // Registro interno de uso (09/10/2026, pedido explicito: "es para ver si
-// mi cliente la esta usando"). No hay login ni pantalla: la app avisa
-// sola al backend cuando alguien entra, cambia de pestana o guarda algo,
-// y se consulta con backend/scripts/inspect-construccion-activity.js.
+// mi cliente la esta usando"). No hay pantalla que lo muestre: la app
+// avisa sola al backend cuando alguien ingresa, sale, cambia de pestana
+// o guarda algo, y se consulta con
+// backend/scripts/inspect-construccion-activity.js.
 //
 // "Quien" es un id que se genera solo la primera vez y queda guardado en
 // el navegador -- es lo mas parecido a un login sin pedirle nada a nadie.
@@ -12,7 +13,7 @@ import { API_BASE_URL } from "../config/api";
 // nuestro (el id pasa a empezar con "yo-").
 const VISITOR_KEY = "construccion-visitor-id";
 
-export type ActivityEvent = "entrada" | "seccion" | "accion";
+export type ActivityEvent = "login" | "logout" | "seccion" | "accion";
 
 function randomId() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {

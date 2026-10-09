@@ -4,6 +4,7 @@ import { AsistenciaPage } from "./pages/AsistenciaPage";
 import { BoletaPage } from "./pages/BoletaPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { LiquidacionPage } from "./pages/LiquidacionPage";
+import { LoginPage } from "./pages/LoginPage";
 import { ObrasPage } from "./pages/ObrasPage";
 import { PersonalPage } from "./pages/PersonalPage";
 import { SeguridadPage } from "./pages/SeguridadPage";
@@ -32,6 +33,11 @@ const ROUTE_LABELS: Record<Route, string> = {
   boleta: "Boleta de pago"
 };
 
+// Si la app queda en segundo plano mas de este tiempo, al volver pide
+// ingresar de nuevo (en el celular "cerrar la app" muchas veces es solo
+// mandarla al fondo, y sin esto nunca volveria a pasar por el login).
+const BACKGROUND_LOGOUT_MS = 30 * 60 * 1000;
+
 const BOLETA_PATTERN = /^boleta\/(\d+)\/(\d{4}-\d{2})$/;
 
 function parseRoute(): ParsedRoute {
@@ -51,6 +57,9 @@ function parseRoute(): ParsedRoute {
 
 export function ConstruccionApp() {
   const [parsed, setParsed] = useState<ParsedRoute>(parseRoute());
+  // La sesion vive solo en memoria, a proposito: cerrar la app, cerrar la
+  // pestana o recargar vuelve siempre a la pantalla de ingreso.
+  const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     function handleHashChange() {
@@ -72,19 +81,50 @@ export function ConstruccionApp() {
 
   const route = parsed.route;
 
-  // Registro interno de uso: una "entrada" al abrir la app y una
-  // "seccion" cada vez que se cambia de pantalla (incluida la primera).
+  // Registro interno de uso: un "login" al tocar Ingresar, una "seccion"
+  // cada vez que se cambia de pantalla (incluida la primera despues de
+  // ingresar) y un "logout" al salir.
   useEffect(() => {
-    trackActivity("entrada");
-  }, []);
+    if (loggedIn) trackActivity("seccion", ROUTE_LABELS[route]);
+  }, [route, loggedIn]);
 
   useEffect(() => {
-    trackActivity("seccion", ROUTE_LABELS[route]);
-  }, [route]);
+    if (!loggedIn) return;
+    let hiddenAt: number | null = null;
+
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        hiddenAt = Date.now();
+        return;
+      }
+      if (hiddenAt !== null && Date.now() - hiddenAt > BACKGROUND_LOGOUT_MS) {
+        trackActivity("logout", "Sesion cerrada sola por inactividad");
+        setLoggedIn(false);
+      }
+      hiddenAt = null;
+    }
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [loggedIn]);
+
+  function handleLogin() {
+    trackActivity("login");
+    setLoggedIn(true);
+  }
+
+  function handleLogout() {
+    trackActivity("logout");
+    setLoggedIn(false);
+  }
+
+  if (!loggedIn) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
 
   return (
     <>
-      {route === "home" ? <DashboardPage onNavigate={goTo} /> : null}
+      {route === "home" ? <DashboardPage onNavigate={goTo} onLogout={handleLogout} /> : null}
       {route === "obras" ? <ObrasPage /> : null}
       {route === "personal" ? <PersonalPage /> : null}
       {route === "asistencia" ? <AsistenciaPage /> : null}

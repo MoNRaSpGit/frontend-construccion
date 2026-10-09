@@ -14,7 +14,7 @@ function currentMonthKey() {
 
 type Route = "home" | "obras" | "personal" | "asistencia" | "seguridad" | "liquidacion";
 
-export function DashboardPage({ onNavigate }: { onNavigate: (route: Route) => void }) {
+export function DashboardPage({ onNavigate, onLogout }: { onNavigate: (route: Route) => void; onLogout: () => void }) {
   const [obras, setObras] = useState<Obra[] | null>(null);
   const [personal, setPersonal] = useState<Personal[] | null>(null);
   const [presentesHoy, setPresentesHoy] = useState<number | null>(null);
@@ -50,6 +50,9 @@ export function DashboardPage({ onNavigate }: { onNavigate: (route: Route) => vo
           </span>
           <p>Resumen general del personal y las obras.</p>
         </div>
+        <button type="button" className="ghost-button logout-button" onClick={onLogout}>
+          Salir
+        </button>
       </header>
 
       {errorMessage ? <p className="status-text status-error">{errorMessage}</p> : null}
